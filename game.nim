@@ -267,6 +267,23 @@ proc load() =
 
 var storeMVX: int = entities[0].maxVelX
 
+proc checkSlide(direction: string): bool =
+  if collision(0, direction, true) == true:
+    if entities[0].isGrounded == false:
+      entities[0].isGrounded = true
+      if isKeyPressed(C): 
+        entities[0].isGrounded = false
+        entities[0].jumpBuffer -= 1
+        case direction
+        of "right":
+          entities[0].accelX -= 1.5
+        of "left":
+          entities[0].accelX += 1.5
+      slide = 0.05
+      if entities[0].velY < 0: entities[0].velY = 0
+      if entities[0].accelY < 0: entities[0].accelY = 0
+    return true
+
 proc update(dt: float) =
   if entities[0].isGrounded == true or slide != 1:
     if isKeyDown(V):
@@ -277,23 +294,14 @@ proc update(dt: float) =
       accelXMult = 1
 
   if isKeyDown(RIGHT):
-    if collision(0, "right", true) == true:
-      if entities[0].isGrounded == false:
-        entities[0].isGrounded = true
-        if isKeyPressed(C):
-          entities[0].isGrounded = false
-          entities[0].jumpBuffer -= 1
-          entities[0].accelX -= 1.5
-        slide = 0.05
-        if entities[0].velY < 0: entities[0].velY = 0
-        if entities[0].accelY < 0: entities[0].accelY = 0
-
-    else: 
+    if checkSlide("right") == false:
       slide = 1 
       if entities[0].isGrounded == true:
         if entities[0].velY < 0: entities[0].velY = 0
-        if entities[0].accelY < 0: entities[0].accelY = 0
-      entities[0].accelX += 0.3
+        if entities[0].accelY < 0: entities[0].accelY = 0 
+        entities[0].accelX += 2
+      else:
+        entities[0].accelX += 0.3
 
   elif not isKeyDown(LEFT):
     slide = 1
@@ -304,23 +312,14 @@ proc update(dt: float) =
         entities[0].velX = 0
 
   if isKeyDown(LEFT):
-    if collision(0, "left", true) == true:
-      if entities[0].isGrounded == false:
-        entities[0].isGrounded = true
-        if isKeyPressed(C): 
-          entities[0].isGrounded = false
-          entities[0].jumpBuffer -= 1
-          entities[0].accelX += 1.5
-        slide = 0.05
-        if entities[0].velY < 0: entities[0].velY = 0
-        if entities[0].accelY < 0: entities[0].accelY = 0
-
-    else: 
+    if checkSlide("left") == false:
       slide = 1
       if entities[0].isGrounded == true:
         if entities[0].velY > 0: entities[0].velY = 0
         if entities[0].accelY > 0: entities[0].accelY = 0
-      entities[0].accelX -= 0.3
+        entities[0].accelX -= 2
+      else:
+        entities[0].accelX -= 0.3
 
   elif not isKeyDown(RIGHT):
     slide = 1
