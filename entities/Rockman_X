@@ -2,5 +2,5 @@ Texture: Rockman_X
 Size: 64 128
 BoxCollision: 0 6 64 128
 JumpBuffer: 15 15
-Accel: 5 50
-Vel: 5 10
+MaxAccel: 5 50
+MaxVel: 5 10
