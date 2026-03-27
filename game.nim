@@ -185,13 +185,17 @@ proc move(id: int, scroll: bool) =
       var k: float
       var z: int
       if vel < 0:
-        if i == 0: direction = "left"
+        if i == 0:
+          eSeq[id].facing = -1
+          direction = "left"
         else: direction = "up"
         k = -1
         z = 0
 
       else:
-        if i == 0: direction = "right"
+        if i == 0:
+          eSeq[id].facing = 1
+          direction = "right"
         else: direction = "down"
         k = 1
         z = 1
@@ -243,11 +247,16 @@ proc load() =
 
 proc update(dt: float) =
   if eSeq[0].isGrounded == true or slide != 1:
-    if isKeyDown(V):
+    if isKeyDown(V) and eSeq[0].dashBuffer > 0:
       dashMult = 2
       eSeq[0].maxVel[0] = 2 * storeMatching("maxVelX").toInt
       eSeq[0].maxAccel[0] = 2 * storeMatching("maxAccelX")
-    elif eSeq[0].isGrounded or slide != 1:
+      if slide == 1:
+        eSeq[0].accel[0] += storeMatching("maxAccelX") * eSeq[0].facing
+        eSeq[0].dashBuffer -= 1
+    else:
+      if not isKeyDown(V):
+        eSeq[0].dashBuffer = eSeq[0].maxDashBuffer
       dashMult = 1
       eSeq[0].maxVel[0] = storeMatching("maxVelX").toInt
       eSeq[0].maxAccel[0] = storeMatching("maxAccelX")

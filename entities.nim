@@ -3,12 +3,12 @@ import os, strutils
 type
   entity* = object
     textureName*: string
+    facing*: float = 1
     colX1*, colY1*: float
     colX2*, colY2*: float
     isGrounded*: bool
-    jumpBuffer*: int
-    maxJumpBuffer*: int
-
+    jumpBuffer*, maxJumpBuffer*: int
+    dashBuffer*, maxDashBuffer*: int
     vel*, maxVel*: array[2, int]
     accel*, maxAccel*, size*, pos*: array[2, float]
 
@@ -41,8 +41,9 @@ proc createEntity*(target: string): entity =
       size:       seq[string] = entityData[1].split(' ')[1 .. 2]
       col:        seq[string] = entityData[2].split(' ')[1 .. 4]
       jump:       seq[string] = entityData[3].split(' ')[1 .. 2]
-      accel:      seq[string] = entityData[4].split(' ')[1 .. 2]
-      vel:        seq[string] = entityData[5].split(' ')[1 .. 2]
+      dash:       seq[string] = entityData[4].split(' ')[1 .. 2]
+      accel:      seq[string] = entityData[5].split(' ')[1 .. 2]
+      vel:        seq[string] = entityData[6].split(' ')[1 .. 2]
 
     newEntitiy.textureName = entityData[0].split(' ')[1]
     newEntitiy.size[0] = size[0].parseFloat
@@ -53,6 +54,8 @@ proc createEntity*(target: string): entity =
     newEntitiy.colY2 = col[3].parseFloat
     newEntitiy.jumpBuffer = jump[0].parseInt
     newEntitiy.maxJumpBuffer = jump[1].parseInt
+    newEntitiy.dashBuffer = dash[0].parseInt
+    newEntitiy.maxDashBuffer = dash[1].parseInt
     newEntitiy.maxAccel[0] = accel[0].parseFloat
     newEntitiy.maxAccel[1] = accel[1].parseFloat
     newEntitiy.maxVel[0] = vel[0].parseInt
