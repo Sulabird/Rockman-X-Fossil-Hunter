@@ -22,6 +22,7 @@ var
   direction: string
   scrollDirection: bool
   dashMult: float
+  displacement: int
 
 let walkTextures: seq[tuple[kind: PathComponent, path: string]] = 
   toSeq(walkDir("textures", relative = true))
@@ -111,7 +112,12 @@ proc drawMap(name: string) =
 
 proc checkTile(x, y: int): char =
   # This will include adjusting tile hitboxes eventually
-  return map[(y / bits).trunc.toInt][(x / bits).trunc.toInt]
+  let my: int = (y / bits).trunc.toInt
+  let mx: int = (x / bits).trunc.toInt
+  if my >= 0 and my < map.len and mx >= 0 and mx < map[0].len:
+    return map[(y / bits).trunc.toInt][(x / bits).trunc.toInt]
+  else:
+    return '*'
 
 proc collision(id: int, direction: string, hit: bool): bool =
   let 
@@ -147,7 +153,7 @@ proc collision(id: int, direction: string, hit: bool): bool =
         eSeq[id].isGrounded = true
         if hit == true:
           eSeq[id].vel[1] = 0
-          if eSeq[id].accel[1] < 0:
+          if eSeq[id].accel[1] > 0:
             eSeq[id].accel[1] = 0
         return true
 
@@ -160,8 +166,16 @@ proc collision(id: int, direction: string, hit: bool): bool =
             eSeq[id].accel[1] = 0
         return true
 
-proc move(id: int, scroll: bool) =
+
+var k: float
+var z: int
+proc move(id: int, scroll: bool): bool =
   eSeq[id].isGrounded = collision(id, "down", false)
+  if eSeq[id].variant == "projectile":
+    if eSeq[id].accel[0] == 0:
+      eSeq.delete(id)
+      displacement += 1
+      return true
 
   for i in 0 .. 1:
     var accel: float = eSeq[id].accel[i]
@@ -182,8 +196,6 @@ proc move(id: int, scroll: bool) =
         vel = maxVel * velDirection
         eSeq[id].vel[i] = vel
 
-      var k: float
-      var z: int
       if vel < 0:
         if i == 0:
           eSeq[id].facing = -1
@@ -199,7 +211,7 @@ proc move(id: int, scroll: bool) =
         else: direction = "down"
         k = 1
         z = 1
-          
+        
       for j in 0 .. vel.abs:
         setScrollBounds(i)
         if i == 0: scrollDirection = scrollHorizontal[z]
@@ -216,10 +228,11 @@ proc move(id: int, scroll: bool) =
           eSeq[id].pos[i] += k
 
 proc moveAll(scrollTarget: int) =
-  for i in 0 .. eSeq.len - 1:
-    if i == scrollTarget: move(i, true)
-    else: move(i, false)
-
+  displacement = 0
+  for id in 0 .. eSeq.len - 1:
+    if id == scrollTarget: discard move(id - displacement, true)
+    else: discard move(id - displacement, false)
+ 
 proc checkSlide(direction: string): bool =
   if collision(0, direction, true) == true:
     if eSeq[0].isGrounded == false:
@@ -239,7 +252,7 @@ proc checkSlide(direction: string): bool =
     return true
 
 proc load() =
-  eSeq.add(createEntity("Rockman_X"))
+  eSeq.add(createEntity([0.0, 0.0], "Rockman_X"))
   storeAdd("maxVelX", eSeq[0].maxVel[0].toFloat)
   storeAdd("maxVelY", eSeq[0].maxVel[1].toFloat)
   storeAdd("maxAccelX", eSeq[0].maxAccel[0])
@@ -273,6 +286,8 @@ proc update(dt: float) =
         eSeq[0].accel[0] += 1 * dashMult
       else:
         eSeq[0].accel[0] += 0.3 * dashMult
+    else:
+      eSeq[0].facing = -1
 
   elif not isKeyDown(LEFT):
     slide = 1
@@ -294,6 +309,8 @@ proc update(dt: float) =
         eSeq[0].accel[0] -= 1 * dashMult
       else:
         eSeq[0].accel[0] -= 0.3 * dashMult
+    else:
+      eSeq[0].facing = 1
 
   elif not isKeyDown(RIGHT):
     slide = 1
@@ -316,6 +333,10 @@ proc update(dt: float) =
     else:
       eSeq[0].jumpBuffer = 0
     eSeq[0].accel[1] = gravity * slide + 1
+
+  if isKeyPressed(X):
+    eSeq.add(createEntity(eSeq[0].pos, "lemonShot"))
+    eSeq[^1].accel[0] = eSeq[0].facing
 
   if isKeyPressed(ESCAPE):
     quit()
