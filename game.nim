@@ -130,7 +130,7 @@ proc collision(id: int, direction: string, hit: bool): bool =
 
   case direction
   of "right":
-    for i in lowerYBound .. upperYBound:
+    for i in [lowerYBound, upperYBound]:
       if checkTile((posX + eSeq[id].colX2).toInt, i) != ' ':
         if hit == true:
           eSeq[id].vel[0] = 0
@@ -139,7 +139,7 @@ proc collision(id: int, direction: string, hit: bool): bool =
         return true
 
   of "left":
-    for i in lowerYBound .. upperYBound:
+    for i in [lowerYBound, upperYBound]:
       if checkTile((posX + eSeq[id].colX1).toInt - 1, i) != ' ':
         if hit == true:
           eSeq[id].vel[0] = 0
@@ -148,7 +148,7 @@ proc collision(id: int, direction: string, hit: bool): bool =
         return true
 
   of "down":
-    for i in lowerXBound .. upperXBound:
+    for i in [lowerXBound, upperXBound]:
       if checkTile(i, (posY + eSeq[id].colY2).toInt) != ' ':
         eSeq[id].isGrounded = true
         if hit == true:
@@ -158,7 +158,7 @@ proc collision(id: int, direction: string, hit: bool): bool =
         return true
 
   of "up":
-    for i in lowerXBound .. upperXBound:
+    for i in [lowerXBound, upperXBound]:
       if checkTile(i, (posY + eSeq[id].colY1).toInt - 1) != ' ':
         if hit == true:
           eSeq[id].vel[1] = 0
