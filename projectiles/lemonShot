@@ -1,0 +1,6 @@
+Texture: blank
+Variant: projectile
+Size: 64 64
+BoxCollision: 0 0 64 64
+MaxAccel: 50 0
+MaxVel: 50 0
