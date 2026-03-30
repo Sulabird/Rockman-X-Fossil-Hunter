@@ -348,7 +348,7 @@ proc update(dt: float) =
     eSeq[0].accel[1] = gravity * slide + 1
 
   if isKeyPressed(X):
-    let px: float = eSeq[0].pos[0] + bits.toFloat
+    var px: float = eSeq[0].pos[0] + bits.toFloat * eSeq[0].facing
     let py: float = eSeq[0].pos[1] + bits / 2
     eSeq.add(createEntity([px, py], "projectiles/lemonShot"))
     eSeq[^1].accel[0] = eSeq[0].facing
