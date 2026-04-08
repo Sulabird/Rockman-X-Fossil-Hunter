@@ -218,24 +218,32 @@ proc move(id: int, scroll: bool) =
                   scrollPos[i] += 1            
           eSeq[id].pos[i] += k
 
-proc moveAll(scrollTarget: int) =
+proc updateAll(scrollTarget: int) =
   displacement = 0
   for id in 0 .. eSeq.len - 1:
+    let eDex: int = id - displacement
+
+    if eSeq[eDex].vel[0] != 0:
+      eSeq[eDex].textureName = directionalSprites(
+        eSeq[eDex].textureName,
+        eSeq[eDex].facing
+      )
+
     var skip: bool
-    let variant: string = eSeq[id - displacement].variant
+    let variant: string = eSeq[eDex].variant
     if variant == "projectile":
-      if eSeq[id - displacement].accel[0] == 0:
-        if eSeq[id - displacement].vel[0] == 0:
-          eSeq.delete(id - displacement)
+      if eSeq[eDex].accel[0] == 0:
+        if eSeq[eDex].vel[0] == 0:
+          eSeq.delete(eDex)
           displacement += 1
           skip = true
 
     elif variant == "player":
-      player(eSeq[id - displacement]).isGrounded = collision(id, "down", false)
+      player(eSeq[eDex]).isGrounded = collision(id, "down", false)
 
     if skip == false:
-      if id == scrollTarget: move(id - displacement, true)
-      else: move(id - displacement, false)
+      if id == scrollTarget: move(eDex, true)
+      else: move(eDex, false)
  
 proc checkSlide(direction: string): bool =
   if collision(0, "down", false) == true:
@@ -359,7 +367,7 @@ proc update(dt: float) =
   eSeq[0].maxVel[1] = (storeMatching("maxVelY") * slide).toInt + 1
 
   #move(0, true)
-  moveAll(0)
+  updateAll(0)
 
 proc draw() =
   clear(Black)

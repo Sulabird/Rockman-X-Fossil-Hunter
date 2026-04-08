@@ -1,4 +1,4 @@
-import os, strutils
+import os, strutils, strformat
 
 type
   base* = ref object of RootObj
@@ -34,7 +34,25 @@ proc storeAdd*(name: string, value: float) =
   newStore.name = name
   newStore.value = value
   eStore.add(newStore)
-  
+
+proc directionalSprites*(name: string, facing: float): string =
+  var name: string = name
+  if name.contains("_LEFT"):
+    name = name[0 .. ^6]
+  elif name.contains("_RIGHT"):
+    name = name[0 .. ^7]
+
+  case facing
+  of -1:
+    if fileExists(&"textures/{name}_LEFT.png"):
+      return name & "_LEFT"
+  of 1:
+    if fileExists(&"textures/{name}_RIGHT.png"):
+      return name & "_RIGHT"
+  else: discard
+
+  return name
+
 proc createEntity*(pos: array[2, float], target: string): base =
   let target: string = target
 
