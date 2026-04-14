@@ -20,8 +20,8 @@ var
   slide: float
   direction: string
   scrollDirection, lockDash: bool
-  dashMult: float
-  displacement: int
+  dashMult, k: float
+  displacement, z: int
   screenHeight, screenWidth: int
 
 let walkTextures: seq[tuple[kind: PathComponent, path: string]] = 
@@ -165,8 +165,6 @@ proc collision(id: int, direction: string, hit: bool): bool =
             eSeq[id].accel[1] = 0
         return true
 
-var k: float
-var z: int
 proc move(id: int, scroll: bool) =
   for i in 0 .. 1:
     var accel: float = eSeq[id].accel[i]
@@ -250,10 +248,10 @@ proc updateAll(scrollTarget: int) =
       else: move(eDex, false)
  
 proc checkSlide(direction: string): bool =
-  if isKeyDown(C) and player(eSeq[0]).jumpBuffer > 0:
+  if collision(0, "down", false) == true:
     return false
 
-  if collision(0, "down", false) == true:
+  if isKeyDown(C) and player(eSeq[0]).jumpBuffer != player(eSeq[0]).maxJumpBuffer:
     return false
 
   if collision(0, direction, true) == true:
@@ -344,7 +342,7 @@ proc update(dt: float) =
       if player(eSeq[0]).isGrounded == true:
         eSeq[0].accel[0] -= pFact
       else:
-        eSeq[0].accel[0] -= pFact / (5 * dashMult)
+        eSeq[0].accel[0] -= pFact / (2 * dashMult)
       if eSeq[0].vel[0] + eSeq[0].accel[0] <= 0:
         eSeq[0].accel[0] = 0
         eSeq[0].vel[0] = 0
@@ -371,7 +369,7 @@ proc update(dt: float) =
       if player(eSeq[0]).isGrounded == true:
         eSeq[0].accel[0] += pFact
       else:
-        eSeq[0].accel[0] += pFact / (5 * dashMult)
+        eSeq[0].accel[0] += pFact / (2 * dashMult)
       if eSeq[0].vel[0] + eSeq[0].accel[0] >= 0:
         eSeq[0].accel[0] = 0
         eSeq[0].vel[0] = 0
@@ -379,7 +377,7 @@ proc update(dt: float) =
   if isKeyDown(C):
     if player(eSeq[0]).isGrounded == true or player(eSeq[0]).jumpBuffer < player(eSeq[0]).maxJumpBuffer:
       if player(eSeq[0]).jumpBuffer > 0:
-        eSeq[0].accel[1] -= 1.5 * (player(eSeq[0]).jumpBuffer / player(eSeq[0]).maxJumpBuffer)
+        eSeq[0].accel[1] -= 1.2 * (player(eSeq[0]).jumpBuffer / player(eSeq[0]).maxJumpBuffer)
         player(eSeq[0]).jumpBuffer -= 1
       else:
         player(eSeq[0]).dashBuffer = 0
