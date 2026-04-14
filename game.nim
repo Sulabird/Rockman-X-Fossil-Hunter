@@ -220,15 +220,9 @@ proc updateAll(scrollTarget: int) =
   displacement = 0
   for id in 0 .. eSeq.len - 1:
     let eDex: int = id - displacement
-
-    if eSeq[eDex].vel[0] != 0 or slide != 1 and eDex == 0:
-      eSeq[eDex].textureName = directionalSprites(
-        eSeq[eDex].textureName,
-        eSeq[eDex].facing
-      )
+    let variant: string = eSeq[eDex].variant
 
     var skip: bool
-    let variant: string = eSeq[eDex].variant
     if variant == "projectile":
       if eSeq[eDex].accel[0] == 0:
         if eSeq[eDex].vel[0] == 0:
@@ -238,10 +232,20 @@ proc updateAll(scrollTarget: int) =
 
     elif variant == "player":
       let groundStatus: bool = collision(id, "down", false, [0,0,0,0])
+      var air: bool
       if player(eSeq[eDex]).isGrounded != groundStatus:
+        air = true
         if player(eSeq[eDex]).isGrounded == false:
           player(eSeq[eDex]).dashBuffer = player(eSeq[eDex]).maxDashBuffer
         player(eSeq[eDex]).isGrounded = groundStatus
+
+      if eSeq[eDex].vel[0] != 0 or eSeq[eDex].textureName.split("_").len > 2 or air == true:
+        eSeq[eDex].textureName = directionalSprites(
+          eSeq[eDex].textureName,
+          eSeq[eDex].facing,
+          eSeq[eDex].vel[0],
+          groundStatus
+        )
 
     if skip == false:
       if id == scrollTarget: move(eDex, true)
@@ -287,7 +291,7 @@ proc load() =
   setFullScreenMode(false)
 
   scale(sx,sy)
-  eSeq.add(createEntity([0.0, 0.0], "entities/Rockman_X", pFact))
+  eSeq.add(createEntity([0.0, 0.0], "entities/RockmanX", pFact))
   storeAdd("maxVelX", eSeq[0].maxVel[0])
   storeAdd("maxVelY", eSeq[0].maxVel[1])
   storeAdd("maxAccelX", eSeq[0].maxAccel[0])

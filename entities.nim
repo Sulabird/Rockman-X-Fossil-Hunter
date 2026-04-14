@@ -21,6 +21,7 @@ type
     value: float
 
 var eStore: seq[store]
+var gCount, wCount: int
 
 proc storeMatching*(name: string): float = 
   if eStore.len > 0:
@@ -34,23 +35,42 @@ proc storeAdd*(name: string, value: float) =
   newStore.value = value
   eStore.add(newStore)
 
-proc directionalSprites*(name: string, facing: float): string =
-  var name: string = name
-  if name.contains("_LEFT"):
-    name = name[0 .. ^6]
-  elif name.contains("_RIGHT"):
-    name = name[0 .. ^7]
+proc directionalSprites*(name: string, facing: float, vel: float, ground: bool): string =
+  gCount += 1
+  if gCount == 10:
+    gCount = 0
+    wCount += 1
+
+  var name: string = name.split("_")[0]
 
   case facing
   of -1:
+    if ground == false:
+      if fileExists(&"textures/{name}_LEFT_AIR.png"):
+        return &"{name}_LEFT_AIR"
+
+    elif vel != 0:
+      if fileExists(&"textures/{name}_LEFT_WALK_{wCount}.png"):
+        return &"{name}_LEFT_WALK_{wCount}"
+      else: wCount = 0
+
     if fileExists(&"textures/{name}_LEFT.png"):
       return name & "_LEFT"
   of 1:
+    if ground == false:
+      if fileExists(&"textures/{name}_RIGHT_AIR.png"):
+        return &"{name}_RIGHT_AIR"
+
+    elif vel != 0:
+      if fileExists(&"textures/{name}_RIGHT_WALK_{wCount}.png"):
+        return &"{name}_RIGHT_WALK_{wCount}"
+      else:
+        wCount = 0  
+
     if fileExists(&"textures/{name}_RIGHT.png"):
       return name & "_RIGHT"
-  else: discard
-
-  return name
+  else: 
+    return name
 
 proc createEntity*(pos: array[2, float], target: string, pf: float): base =
   let target: string = target

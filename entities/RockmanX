@@ -1,7 +1,7 @@
-Texture: Rockman_X
+Texture: RockmanX
 Variant: player
-Size: 16 32
-BoxCollision: 0 1 16 32
+Size: 31 40
+BoxCollision: 0 0 31 40
 MaxAccel: 10 50
 MaxVel: 5 10
 JumpBuffer: 15 15
