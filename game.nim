@@ -254,7 +254,7 @@ proc checkSlide(direction: string): bool =
   if isKeyDown(C) and player(eSeq[0]).jumpBuffer != player(eSeq[0]).maxJumpBuffer:
     return false
 
-  if collision(0, direction, true, [0,-1 * bits,0,0]) == true:
+  if collision(0, direction, true, [bits,0,0,0]) == true:
     if player(eSeq[0]).isGrounded == false:
       player(eSeq[0]).isGrounded = true
       slide = 0.3
