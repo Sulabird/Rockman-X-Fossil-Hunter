@@ -119,14 +119,14 @@ proc checkTile(x, y: int): char =
   else:
     return '*'
 
-proc collision(id: int, direction: string, hit: bool): bool =
+proc collision(id: int, direction: string, hit: bool, ovr: array[4, int]): bool =
   let 
     posX: float = eSeq[id].pos[0]
     posY: float = eSeq[id].pos[1] - startHeight
-    lowerYBound: int = (posY + eSeq[id].colY1).toInt
-    upperYBound: int = (posY + eSeq[id].colY2).toInt - 1
-    lowerXBound: int = (posX + eSeq[id].colX1).toInt
-    upperXBound: int = (posX + eSeq[id].colX2).toInt - 1
+    lowerYBound: int = (posY + eSeq[id].colY1).toInt + ovr[0]
+    upperYBound: int = (posY + eSeq[id].colY2).toInt - 1 + ovr[1]
+    lowerXBound: int = (posX + eSeq[id].colX1).toInt + ovr[2]
+    upperXBound: int = (posX + eSeq[id].colX2).toInt - 1 + ovr[3]
 
   case direction
   of "right":
@@ -205,7 +205,7 @@ proc move(id: int, scroll: bool) =
         setScrollBounds(i)
         if i == 0: scrollDirection = scrollHorizontal[z]
         else: scrollDirection = scrollVertical[z]
-        if collision(id, direction, true) == false:
+        if collision(id, direction, true, [0,0,0,0]) == false:
           if scroll == true:
             if scrollDirection == true:
               if k == -1:
@@ -237,7 +237,7 @@ proc updateAll(scrollTarget: int) =
           skip = true
 
     elif variant == "player":
-      let groundStatus: bool = collision(id, "down", false)
+      let groundStatus: bool = collision(id, "down", false, [0,0,0,0])
       if player(eSeq[eDex]).isGrounded != groundStatus:
         if player(eSeq[eDex]).isGrounded == false:
           player(eSeq[eDex]).dashBuffer = player(eSeq[eDex]).maxDashBuffer
@@ -248,13 +248,13 @@ proc updateAll(scrollTarget: int) =
       else: move(eDex, false)
  
 proc checkSlide(direction: string): bool =
-  if collision(0, "down", false) == true:
+  if collision(0, "down", false, [0,0,0,0]) == true:
     return false
 
   if isKeyDown(C) and player(eSeq[0]).jumpBuffer != player(eSeq[0]).maxJumpBuffer:
     return false
 
-  if collision(0, direction, true) == true:
+  if collision(0, direction, true, [0,-1 * bits,0,0]) == true:
     if player(eSeq[0]).isGrounded == false:
       player(eSeq[0]).isGrounded = true
       slide = 0.3
