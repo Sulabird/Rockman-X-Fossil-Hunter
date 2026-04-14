@@ -58,7 +58,6 @@ proc directionalSprites*(
   else:
     fCount = 0
 
-
   case facing
   of -1:
     if slide != 1:
@@ -95,6 +94,16 @@ proc directionalSprites*(
       return &"{name}_RIGHT{f}"
   else: 
     return name
+
+proc updateCollision*(target: string): array[4, float] =
+  if fileExists(&"collision/{target}"):
+    let data: seq[string] = readFile(&"collision/{target}")[0 .. ^2].split(',')
+    var newValues: array[4, float]
+    for i in 0 .. 3:
+      newValues[i] = data[i].parseFloat
+    return newValues
+  else:
+    return [0,0,48,48]
 
 proc createEntity*(pos: array[2, float], target: string, pf: float): base =
   let target: string = target

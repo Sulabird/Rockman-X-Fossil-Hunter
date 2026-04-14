@@ -23,7 +23,6 @@ var
   dashMult, k: float
   displacement, z: int
   screenHeight, screenWidth: int
-  rockmanX: SpriteBatch
 
 let walkTextures: seq[tuple[kind: PathComponent, path: string]] = 
   toSeq(walkDir("textures", relative = true))
@@ -232,7 +231,7 @@ proc updateAll(scrollTarget: int, fire: bool) =
           skip = true
 
     elif variant == "player":
-      let groundStatus: bool = collision(id, "down", false, [0,0,0,0])
+      let groundStatus: bool = collision(eDex, "down", false, [0,0,0,0])
       var air: bool
       if player(eSeq[eDex]).isGrounded != groundStatus:
         air = true
@@ -240,15 +239,25 @@ proc updateAll(scrollTarget: int, fire: bool) =
           player(eSeq[eDex]).dashBuffer = player(eSeq[eDex]).maxDashBuffer
         player(eSeq[eDex]).isGrounded = groundStatus
 
-      if eSeq[eDex].vel[0] != 0 or eSeq[eDex].textureName.split("_").len > 2 or air == true or fire == true:
-        eSeq[eDex].textureName = directionalSprites(
-          eSeq[eDex].textureName,
-          eSeq[eDex].facing,
-          eSeq[eDex].vel[0],
-          groundStatus,
-          fire,
-          slide
-        )
+      if eSeq[eDex].facing == 1 and collision(eDex, "right", false, [0,0,0,0]) == false or eSeq[eDex].facing == -1 and collision(eDex, "left", false, [0,0,0,0]) == false or fire == true:
+
+        if eSeq[eDex].vel[0] != 0 or eSeq[eDex].textureName.split("_").len > 2 or air == true or fire == true:
+          let newName: string = directionalSprites(
+            eSeq[eDex].textureName,
+            eSeq[eDex].facing,
+            eSeq[eDex].vel[0],
+            groundStatus,
+            fire,
+            slide
+          )
+
+          if eSeq[eDex].textureName != newName:
+            eSeq[eDex].textureName = newName
+            let newBox: array[4, float] = updateCollision(newName)
+            eSeq[eDex].colX1 = newBox[0]
+            eSeq[eDex].colY1 = newBox[1]
+            eSeq[eDex].colX2 = newBox[2]
+            eSeq[eDex].colY2 = newBox[3]
 
     if skip == false:
       if id == scrollTarget: move(eDex, true)
@@ -261,7 +270,7 @@ proc checkSlide(direction: string): bool =
   if isKeyDown(C) and player(eSeq[0]).jumpBuffer != player(eSeq[0]).maxJumpBuffer:
     return false
 
-  if collision(0, direction, true, [bits,0,0,0]) == true:
+  if collision(0, direction, true, [24,0,0,0]) == true:
     if player(eSeq[0]).isGrounded == false:
       player(eSeq[0]).isGrounded = true
       slide = 0.3
@@ -409,10 +418,10 @@ proc update(dt: float) =
     fire = true
     var px: float = eSeq[0].pos[0]
     if eSeq[0].facing == 1:
-      px += bits.toFloat + 16
+      px += bits.toFloat + 24
     else:
-      px -= bits.toFloat - 2
-    let py: float = eSeq[0].pos[1] + bits / 2 + 8
+      px -= bits.toFloat - 8
+    let py: float = eSeq[0].pos[1] + bits / 2 + 16
     eSeq.add(createEntity([px, py], "projectiles/lemonShot", pFact))
     eSeq[^1].accel[0] = eSeq[0].facing
 
