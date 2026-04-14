@@ -216,7 +216,7 @@ proc move(id: int, scroll: bool) =
                   scrollPos[i] += 1            
           eSeq[id].pos[i] += k
 
-proc updateAll(scrollTarget: int) =
+proc updateAll(scrollTarget: int, fire: bool) =
   displacement = 0
   for id in 0 .. eSeq.len - 1:
     let eDex: int = id - displacement
@@ -239,12 +239,13 @@ proc updateAll(scrollTarget: int) =
           player(eSeq[eDex]).dashBuffer = player(eSeq[eDex]).maxDashBuffer
         player(eSeq[eDex]).isGrounded = groundStatus
 
-      if eSeq[eDex].vel[0] != 0 or eSeq[eDex].textureName.split("_").len > 2 or air == true:
+      if eSeq[eDex].vel[0] != 0 or eSeq[eDex].textureName.split("_").len > 2 or air == true or fire == true:
         eSeq[eDex].textureName = directionalSprites(
           eSeq[eDex].textureName,
           eSeq[eDex].facing,
           eSeq[eDex].vel[0],
-          groundStatus
+          groundStatus,
+          fire
         )
 
     if skip == false:
@@ -401,9 +402,15 @@ proc update(dt: float) =
       player(eSeq[0]).jumpBuffer = 0
     eSeq[0].accel[1] = gravity * slide
 
+  var fire: bool
   if isKeyPressed(X):
-    var px: float = eSeq[0].pos[0] + bits.toFloat * eSeq[0].facing
-    let py: float = eSeq[0].pos[1] + bits / 2
+    fire = true
+    var px: float = eSeq[0].pos[0]
+    if eSeq[0].facing == 1:
+      px += bits.toFloat + 16
+    else:
+      px -= bits.toFloat - 2
+    let py: float = eSeq[0].pos[1] + bits / 2 + 8
     eSeq.add(createEntity([px, py], "projectiles/lemonShot", pFact))
     eSeq[^1].accel[0] = eSeq[0].facing
 
@@ -412,7 +419,7 @@ proc update(dt: float) =
  
   eSeq[0].maxVel[1] = storeMatching("maxVelY") * slide
 
-  updateAll(0)
+  updateAll(0, fire)
 
 proc draw() =
   clear(Black)

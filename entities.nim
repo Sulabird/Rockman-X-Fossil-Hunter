@@ -21,7 +21,7 @@ type
     value: float
 
 var eStore: seq[store]
-var gCount, wCount: int
+var gCount, wCount, fCount: int
 
 proc storeMatching*(name: string): float = 
   if eStore.len > 0:
@@ -35,40 +35,52 @@ proc storeAdd*(name: string, value: float) =
   newStore.value = value
   eStore.add(newStore)
 
-proc directionalSprites*(name: string, facing: float, vel: float, ground: bool): string =
+proc getWC*(): int =
+  return wCount + 1
+
+proc directionalSprites*(name: string, facing: float, vel: float, ground, fire: bool): string =
   gCount += 1
+  fCount -= 1
   if gCount == 10:
     gCount = 0
     wCount += 1
-
+ 
   var name: string = name.split("_")[0]
+  var f: string
+  if fire == true:
+    fCount = 15
+  if fCount > 0:
+    f = "_FIRE"
+  else:
+    fCount = 0
+
 
   case facing
   of -1:
     if ground == false:
-      if fileExists(&"textures/{name}_LEFT_AIR.png"):
-        return &"{name}_LEFT_AIR"
+      if fileExists(&"textures/{name}_LEFT_AIR{f}.png"):
+        return &"{name}_LEFT_AIR{f}"
 
     elif vel != 0:
-      if fileExists(&"textures/{name}_LEFT_WALK_{wCount}.png"):
-        return &"{name}_LEFT_WALK_{wCount}"
+      if fileExists(&"textures/{name}_LEFT_WALK_{wCount}{f}.png"):
+        return &"{name}_LEFT_WALK_{wCount}{f}"
       else: wCount = 0
 
-    if fileExists(&"textures/{name}_LEFT.png"):
-      return name & "_LEFT"
+    if fileExists(&"textures/{name}_LEFT{f}.png"):
+      return &"{name}_LEFT{f}"
   of 1:
     if ground == false:
-      if fileExists(&"textures/{name}_RIGHT_AIR.png"):
-        return &"{name}_RIGHT_AIR"
+      if fileExists(&"textures/{name}_RIGHT_AIR{f}.png"):
+        return &"{name}_RIGHT_AIR{f}"
 
     elif vel != 0:
-      if fileExists(&"textures/{name}_RIGHT_WALK_{wCount}.png"):
-        return &"{name}_RIGHT_WALK_{wCount}"
+      if fileExists(&"textures/{name}_RIGHT_WALK_{wCount}{f}.png"):
+        return &"{name}_RIGHT_WALK_{wCount}{f}"
       else:
         wCount = 0  
 
-    if fileExists(&"textures/{name}_RIGHT.png"):
-      return name & "_RIGHT"
+    if fileExists(&"textures/{name}_RIGHT{f}.png"):
+      return &"{name}_RIGHT{f}"
   else: 
     return name
 

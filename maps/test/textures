@@ -10,4 +10,12 @@ x|RockmanX_RIGHT
 x|RockmanX_RIGHT_AIR
 x|RockmanX_RIGHT_WALK_1
 x|RockmanX_RIGHT_WALK_2
+x|RockmanX_LEFT_FIRE
+x|RockmanX_LEFT_AIR_FIRE
+x|RockmanX_LEFT_WALK_1_FIRE
+x|RockmanX_LEFT_WALK_2_FIRE
+x|RockmanX_RIGHT_FIRE
+x|RockmanX_RIGHT_AIR_FIRE
+x|RockmanX_RIGHT_WALK_1_FIRE
+x|RockmanX_RIGHT_WALK_2_FIRE
 x|lemon
