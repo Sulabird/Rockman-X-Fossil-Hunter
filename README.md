@@ -32,5 +32,5 @@ is ./bin and execute the binary.
 
 ## Legal Notice
 Rockman X Fossil Hunter is a FOSS (Free, Open Source Software) fan game. Code is licensed under the AGPL.
-It is not affiliated, associated, authorized, endorsed by, or in any way officially connected with CAPCOM<br>
+It is not affiliated, associated, authorized, endorsed by, or in any way officially connected with CAPCOM.
 Sprites are my own work, these are licensed under CC-BY-SA 4.0, however Rockman X / Mega Man X is property of CAPCOM.
