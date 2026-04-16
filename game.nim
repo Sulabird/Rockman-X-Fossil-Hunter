@@ -265,12 +265,14 @@ proc updateAll(scrollTarget: int) =
     var skip: bool
     if variant == "projectile":
       if eSeq[eDex].vel[0] == 0:
-        let centreX: float = eSeq[eDex].pos[0] + eSeq[eDex].size[0] / 2
-        let centreY: float = eSeq[eDex].pos[1] + eSeq[eDex].size[1] / 2
-        if checkTile([centreX, centreY]) != ' ': eSeq[eDex].accel[0] = 0
-
-      if eSeq[eDex].accel[0] == 0:
-        if eSeq[eDex].vel[0] == 0:
+        if eSeq[eDex].accel[0] != 0:
+          let centreX: float = eSeq[eDex].pos[0] + eSeq[eDex].size[0] / 2
+          let centreY: float = eSeq[eDex].pos[1] + eSeq[eDex].size[1] / 2
+          if checkTile([centreX, centreY]) != ' ':
+            eSeq[eDex].accel[0] = 0
+            skip = true
+        else: skip = true
+        if skip:
           eSeq.delete(eDex)
           displacement += 1
           skip = true
