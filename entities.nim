@@ -82,13 +82,14 @@ proc directionalSprites*(
       if fileExists(&"textures/{name}_LEFT_AIR{f}.png"):
         return &"{name}_LEFT_AIR{f}"
 
-    elif vel != 0:
+    elif vel <= -1:
       if fileExists(&"textures/{name}_LEFT_WALK_{wCount}{f}.png"):
         return &"{name}_LEFT_WALK_{wCount}{f}"
       else: wCount = 0
 
     if fileExists(&"textures/{name}_LEFT{f}.png"):
       return &"{name}_LEFT{f}"
+
   of 1:
     if slide != 1:
       if fileExists(&"textures/{name}_RIGHT_SLIDE{f}.png"):
@@ -98,7 +99,7 @@ proc directionalSprites*(
       if fileExists(&"textures/{name}_RIGHT_AIR{f}.png"):
         return &"{name}_RIGHT_AIR{f}"
 
-    elif vel != 0:
+    elif vel >= 1:
       if fileExists(&"textures/{name}_RIGHT_WALK_{wCount}{f}.png"):
         return &"{name}_RIGHT_WALK_{wCount}{f}"
       else:

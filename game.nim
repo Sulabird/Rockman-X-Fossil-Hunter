@@ -213,7 +213,7 @@ proc move(id: int, scroll: bool) =
         if i == 0:
           eSeq[id].facing = -1
           direction = "left"
-          checkedCollision[3] = 1
+          checkedCollision[2] = 1
         else: 
           direction = "up"
           checkedCollision[0] = 1
@@ -224,10 +224,10 @@ proc move(id: int, scroll: bool) =
         if i == 0:
           eSeq[id].facing = 1
           direction = "right"
-          checkedCollision[1] = 1
+          checkedCollision[3] = 1
         else: 
           direction = "down"
-          checkedCollision[2] = 1
+          checkedCollision[1] = 1
         k = 1
         z = 1
         
@@ -246,7 +246,9 @@ proc move(id: int, scroll: bool) =
                   scrollPos[i] += 1            
           eSeq[id].pos[i] += k
           moved = true
-        else: break
+        else:
+          eSeq[id].vel[i] = 0
+          break
 
     if moved:
       moved = false
@@ -295,7 +297,7 @@ proc updateAll(scrollTarget: int) =
       if eSeq[eDex].facing == 1 and eSeq[eDex].activeCollision.right == false: checkRight = true
       if eSeq[eDex].facing == -1 and eSeq[eDex].activeCollision.left == false: checkLeft = true
 
-      if checkRight or checkLeft or eSeq[eDex].vel[0] == 0:
+      if checkRight or checkLeft or eSeq[eDex].vel[0].trunc == 0:
         if force or air or checkFire:
           let newName: string = directionalSprites(
             eSeq[eDex].textureName,
@@ -391,13 +393,9 @@ proc update(dt: float) =
       eSeq[0].facing = 1
       if player(eSeq[0]).isGrounded == true:
         slide = 1 
-        if eSeq[0].vel[1] < 0: eSeq[0].vel[1] = 0
-        if eSeq[0].accel[1] < 0: eSeq[0].accel[1] = 0 
         eSeq[0].accel[0] += 2 * dashMult * pFact
       elif slide != 1:
         slide = 1
-        if eSeq[0].accel[0] < 1: eSeq[0].accel[0] = 1
-        else: eSeq[0].accel[0] += dashMult * pFact
       else: eSeq[0].accel[0] += 0.2 * dashMult * pFact
     else: eSeq[0].facing = -1
 
@@ -415,13 +413,9 @@ proc update(dt: float) =
       eSeq[0].facing = -1
       if player(eSeq[0]).isGrounded == true:
         slide = 1
-        if eSeq[0].vel[1] > 0: eSeq[0].vel[1] = 0
-        if eSeq[0].accel[1] > 0: eSeq[0].accel[1] = 0
         eSeq[0].accel[0] -= 2 * dashMult * pFact
       elif slide != 1:
         slide = 1
-        if eSeq[0].accel[0] > -1: eSeq[0].accel[0] = -1
-        else: eSeq[0].accel[0] -= dashMult * pFact
       else: eSeq[0].accel[0] -= 0.2 * dashMult * pFact
     else: eSeq[0].facing = 1
 
