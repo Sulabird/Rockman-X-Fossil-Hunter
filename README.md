@@ -25,7 +25,8 @@ as compile the game outputting it in ./bin, on linux it also checks for wayland 
 To build manually:<br>
 - Install kirpi with nimble: ``nimble install kirpi``<br>
 - Compile the game ``nim c [options] ./src/game.nim``<br>
-- Move it to ./bin ``mkdir ./bin && mv ./src/game.nim ./bin``<br>
+- Move it to ./bin ``mkdir ./bin && mv ./src/game.nim ./bin``
+
 To run the game make sure your working directory
 is ./bin and execute the binary.
 
