@@ -394,8 +394,7 @@ proc update(dt: float) =
       if player(eSeq[0]).isGrounded == true:
         slide = 1 
         eSeq[0].accel[0] += 2 * dashMult * pFact
-      elif slide != 1:
-        slide = 1
+      elif slide != 1: slide = 1
       else: eSeq[0].accel[0] += 0.2 * dashMult * pFact
     else: eSeq[0].facing = -1
 
@@ -414,8 +413,7 @@ proc update(dt: float) =
       if player(eSeq[0]).isGrounded == true:
         slide = 1
         eSeq[0].accel[0] -= 2 * dashMult * pFact
-      elif slide != 1:
-        slide = 1
+      elif slide != 1: slide = 1
       else: eSeq[0].accel[0] -= 0.2 * dashMult * pFact
     else: eSeq[0].facing = 1
 
