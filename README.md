@@ -23,9 +23,9 @@ Note: Building on windows not tested<br>
 On linux & windows build.sh/ps1 will check for kirpi and install it with nimble if needed, as well
 as compile the game outputting it in ./bin, on linux it also checks for wayland using WAYLAND_DISPLAY<br><br>
 To build manually:<br>
-Install kirpi with nimble: ``nimble install kirpi``<br>
-Compile the game ``nim c [options] ./src/game.nim``<br>
-Move it to ./bin ``mkdir ./bin && mv ./src/game.nim ./bin``<br>
+- Install kirpi with nimble: ``nimble install kirpi``<br>
+- Compile the game ``nim c [options] ./src/game.nim``<br>
+- Move it to ./bin ``mkdir ./bin && mv ./src/game.nim ./bin``
 To run the game make sure your working directory
 is ./bin and execute the binary.
 
