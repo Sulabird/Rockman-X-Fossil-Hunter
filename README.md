@@ -3,7 +3,7 @@ This is a WIP scrolling-platformer heavily inspired by the Rockman X franchise, 
 it only contains a test map with movement options similar to that of said franchise, as well as the basic lemon shot.
 Tiles are 16x16, by default the game will scale from 480x270.<br><br>
 For more context I'm a novice nim user trying out game development. I've been interested in the
-Rockman X games for quite a while. I kind just made up the physics so don't expect it to play identically.
+Rockman X games for quite a while. I kind of just made up the physics so don't expect it to play identically.
 
 ## Made with kirpi
 This project is made with kirpi: an elegant, lightweight game framework for Nim.<br>
