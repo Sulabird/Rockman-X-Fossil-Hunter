@@ -174,7 +174,7 @@ proc collision(id: int, direction: string, hit: bool, ovr: array[4, int]): bool 
     for i in lowerXBound .. upperXBound:
       var skip: bool
       if checkTile([i.toFloat, posY + eSeq[id].colY2]) != ' ':
-        if phantom == true:
+        if phantom:
           if i - lowerXBound < 1 or i >= upperXBound - 1:
             if checkTile([i.toFloat, posY + eSeq[id].colY2 - 1]) != ' ':
               skip = true
@@ -247,8 +247,8 @@ proc move(id: int, scroll: bool) =
         if i == 0: scrollDirection = scrollHorizontal[z]
         else: scrollDirection = scrollVertical[z]
         if collision(id, direction, true, [0,0,0,0]) == false:
-          if scroll == true:
-            if scrollDirection == true:
+          if scroll:
+            if scrollDirection:
               if k == -1:
                 if eSeq[id].pos[i] + (eSeq[id].size[i] / 2) - scrollPos[i] <= scrollSet[i]:
                   scrollPos[i] -= 1
@@ -349,13 +349,13 @@ proc updateAll(scrollTarget: int) =
 
  
 proc checkSlide(direction: string): bool =
-  if eSeq[0].activeCollision.down == true:
+  if eSeq[0].activeCollision.down:
     return false
 
   if isKeyDown(C) and player(eSeq[0]).jumpBuffer != player(eSeq[0]).maxJumpBuffer:
     return false
 
-  if collision(0, direction, true, [24,0,0,0]) == true:
+  if collision(0, direction, true, [24,0,0,0]) and collision(0, direction, true, [0,-24,0,0]):
     if player(eSeq[0]).isGrounded == false:
       player(eSeq[0]).isGrounded = true
       slide = 0.3
@@ -402,7 +402,7 @@ proc update(dt: float) =
   oldSlide = slide
   oldFacing = eSeq[0].facing
 
-  if player(eSeq[0]).isGrounded == true or slide != 1:
+  if player(eSeq[0]).isGrounded or slide != 1:
     if isKeyPressed(V):
       lockDash = false
 
@@ -429,7 +429,7 @@ proc update(dt: float) =
   if isKeyDown(RIGHT):
     if checkSlide("right") == false:
       eSeq[0].facing = 1
-      if player(eSeq[0]).isGrounded == true:
+      if player(eSeq[0]).isGrounded:
         slide = 1 
         eSeq[0].accel[0] += 2 * dashMult * pFact
       elif slide != 1: slide = 1
@@ -439,7 +439,7 @@ proc update(dt: float) =
   elif not isKeyDown(LEFT):
     slide = 1
     if eSeq[0].vel[0] > 0:
-      if player(eSeq[0]).isGrounded == true: eSeq[0].accel[0] -= pFact
+      if player(eSeq[0]).isGrounded: eSeq[0].accel[0] -= pFact
       else: eSeq[0].accel[0] -= pFact / (2 * dashMult)
       if eSeq[0].vel[0] + eSeq[0].accel[0] <= 0:
         eSeq[0].accel[0] = 0
@@ -448,7 +448,7 @@ proc update(dt: float) =
   if isKeyDown(LEFT):
     if checkSlide("left") == false:
       eSeq[0].facing = -1
-      if player(eSeq[0]).isGrounded == true:
+      if player(eSeq[0]).isGrounded:
         slide = 1
         eSeq[0].accel[0] -= 2 * dashMult * pFact
       elif slide != 1: slide = 1
@@ -458,14 +458,14 @@ proc update(dt: float) =
   elif not isKeyDown(RIGHT):
     slide = 1
     if eSeq[0].vel[0] < 0:
-      if player(eSeq[0]).isGrounded == true: eSeq[0].accel[0] += pFact
+      if player(eSeq[0]).isGrounded: eSeq[0].accel[0] += pFact
       else: eSeq[0].accel[0] += pFact / (2 * dashMult)
       if eSeq[0].vel[0] + eSeq[0].accel[0] >= 0:
         eSeq[0].accel[0] = 0
         eSeq[0].vel[0] = 0
 
   if isKeyDown(C):
-    if player(eSeq[0]).isGrounded == true or player(eSeq[0]).jumpBuffer < player(eSeq[0]).maxJumpBuffer:
+    if player(eSeq[0]).isGrounded or player(eSeq[0]).jumpBuffer < player(eSeq[0]).maxJumpBuffer:
       if player(eSeq[0]).jumpBuffer > 0:
         eSeq[0].accel[1] -= 1.2 * (player(eSeq[0]).jumpBuffer / player(eSeq[0]).maxJumpBuffer)
         player(eSeq[0]).jumpBuffer -= 1
@@ -473,7 +473,7 @@ proc update(dt: float) =
         player(eSeq[0]).dashBuffer = 0
         eSeq[0].accel[1] = gravity * slide
   else:
-    if player(eSeq[0]).isGrounded == true:
+    if player(eSeq[0]).isGrounded:
       player(eSeq[0]).jumpBuffer = player(eSeq[0]).maxJumpBuffer
     else:
       player(eSeq[0]).dashBuffer = 0
