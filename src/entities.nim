@@ -25,7 +25,7 @@ type
     activeCollision*: collisionData
   
   player* = ref object of base
-    isGrounded*: bool
+    isGrounded*, fire*: bool
     jumpBuffer*, maxJumpBuffer*: int
     dashBuffer*, maxDashBuffer*: int
 
@@ -179,7 +179,5 @@ proc matchEntity*(map: string, coords: array[2, int]): string =
   let entityList: seq[string] = readFile(&"../data/maps/{map}/entityList").splitLines
   for i in 0 .. entityList.len - 2:
     let eSplit: seq[string] = entityList[0].split(' ')
-    echo eSplit
-    echo coords
     if eSplit[0] == &"{coords[0]},{coords[1]}":
       return eSplit[1]

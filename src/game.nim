@@ -31,7 +31,7 @@ var
   eSeq: seq[base]
   slide, oldSlide, oldFacing: float
   direction: string
-  scrollDirection, lockDash, moved, fire: bool
+  scrollDirection, lockDash, moved: bool
   dashMult, k: float
   displacement, z: int
   screenHeight, screenWidth: int
@@ -330,13 +330,12 @@ proc updateAll(scrollTarget: int) =
           player(eSeq[eDex]).dashBuffer = player(eSeq[eDex]).maxDashBuffer
         player(eSeq[eDex]).isGrounded = groundStatus
 
-      var checkFire, checkLeft, checkRight, force: bool
+      var checkLeft, checkRight, force: bool
       force = updateFire()
       if eSeq[eDex].vel[0] != 0 and groundStatus: force = updateWalk()
       else: resetWalk()
 
       if eDex == 0 and force == false:
-        checkFire = fire
         if eSeq[0].facing != oldFacing: force = true
         if slide != oldSlide: force = true
 
@@ -344,13 +343,13 @@ proc updateAll(scrollTarget: int) =
       if eSeq[eDex].facing == -1 and eSeq[eDex].activeCollision.left == false: checkLeft = true
 
       if checkRight or checkLeft or eSeq[eDex].vel[0].trunc == 0:
-        if force or air or checkFire:
+        if force or air or player(eSeq[eDex]).fire:
           let newName: string = directionalSprites(
             eSeq[eDex].textureName,
             eSeq[eDex].facing,
             eSeq[eDex].vel[0],
             groundStatus,
-            fire,
+            player(eSeq[eDex]).fire,
             slide
           )
 
@@ -492,7 +491,7 @@ proc update(dt: float) =
     eSeq[0].accel[1] = gravity * slide
 
   if isKeyPressed(X):
-    fire = true
+    player(eSeq[0]).fire = true
     var px: float = eSeq[0].pos[0]
     if eSeq[0].facing == 1:
       px += bits.toFloat + 24
@@ -502,7 +501,7 @@ proc update(dt: float) =
     eSeq.add(createEntity([px, py], "projectiles/lemonShot", pFact))
     eSeq[^1].accel[0] = eSeq[0].facing
   else:
-    fire = false
+    player(eSeq[0]).fire = false
 
   if isKeyPressed(ESCAPE):
     quit()
