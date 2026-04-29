@@ -177,7 +177,7 @@ proc collision(id: int, direction: string, hit, all: bool, ovr: array[4, int]): 
 
   of "down":
     var phantom: bool
-    if id == 0 and hit and slide == 1:
+    if id == 0 and slide == 1:
       lowerXBound -= 1
       upperXBound += 1
       phantom = true
