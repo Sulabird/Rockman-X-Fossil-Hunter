@@ -35,6 +35,11 @@ type
     name: string
     value: float
 
+  updateNpc* = object
+    updateNeeded*: bool
+    npcData*: base
+    addEntities*: seq[base]
+
 var eStore: seq[store]
 var gCount, wCount, fCount: int
 

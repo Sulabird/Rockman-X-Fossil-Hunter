@@ -10,31 +10,12 @@ You should have received a copy of the GNU Affero General Public License along w
 ]#
 
 import entities, strutils
-
-type
-  updateNpc* = object
-    updateNeeded*: bool
-    npcData*: base
-    addEntities*: seq[base]
+import npcs/met
 
 var update: updateNpc
 
-proc metEnemy(npc, player: base): base =
-  if player.pos[0] < npc.pos[0]:
-    if npc.facing == 1: 
-      npc.facing = -1
-      npc.textureName = "Met_LEFT"
-      update.updateNeeded = true
-  else: 
-    if npc.facing == -1:
-      npc.facing = 1
-      npc.textureName = "Met_RIGHT"
-      update.updateNeeded = true
-    
-  return npc
-
 proc calcNpc*(npc, player: base): updateNpc =
   case npc.textureName.split('_')[0]
-  of "Met": update.npcData = metEnemy(npc, player)
+  of "Met": update = metEnemy(npc, player)
   else: discard
   return update
