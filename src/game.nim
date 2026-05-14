@@ -20,7 +20,6 @@ const
 
 var 
   textures: seq[Texture]
-  textureList: seq[seq[string]]
   scrollPos: array[2, float]
   startHeight: float
   map: seq[string]
@@ -39,10 +38,8 @@ var
 let walkTextures: seq[tuple[kind: PathComponent, path: string]] = 
   toSeq(walkDir("../data/textures", relative = true))
 
-proc match(search: string, option: int): Texture =
-  for i in 0 .. textureList.len - 1:
-    if textureList[i][option] == search:
-      return textures[i]
+proc match(search: string): Texture =
+  return textures[readFile(&"../data/match/{search}").parseInt]
 
 proc loadMap(name: string) =
   map = readFile("../data/maps/" & name & "/main").splitLines
@@ -74,7 +71,8 @@ proc loadMap(name: string) =
     for j in 0 .. walkTextures.len - 1:
       if walkTextures[j][1].split('.')[0] == tileMatch[1]:
         textures[i] = newTexture("../data/textures/" & walkTextures[j][1], Nearest)
-        textureList.add(tileMatch)
+        for k in 0 .. 1: 
+          writeFile(&"../data/match/{tileMatch[k]}", &"{i}")
         break
 
 proc setScrollBounds(i: int) =
@@ -119,12 +117,12 @@ proc drawMap(name: string) =
         eSeq.add(createEntity([tileX, tileY], matchEntity(name, [x, y]), pFact))
         map[y][x] = ' '
       else: 
-        let tile = match(mChar, 0)
+        let tile = match(mChar)
         draw(tile, tileX, tileY)
   
   for id in 0 .. eSeq.len - 1:
     draw(
-      match(eSeq[id].textureName, 1), 
+      match(eSeq[id].textureName), 
       eSeq[id].pos[0] - scrollPos[0], 
       eSeq[id].pos[1] - scrollPos[1]
     )
@@ -382,6 +380,9 @@ proc checkSlide(direction: string): bool =
     return true
 
 proc load() =
+  if not dirExists("../data/match"):
+    createDir("../data/match")
+
   setFullScreenMode(true)
 
   let
@@ -504,6 +505,7 @@ proc update(dt: float) =
     player(eSeq[0]).fire = false
 
   if isKeyPressed(ESCAPE):
+    removeDir("../data/match")
     quit()
  
   eSeq[0].maxVel[1] = storeMatching("maxVelY") * slide
